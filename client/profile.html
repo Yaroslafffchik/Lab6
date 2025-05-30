@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Личный кабинет</title>
+  <style>
+    :root {
+      --bg-color: #ffffff;
+      --text-color: #333333;
+      --primary-color: #007bff;
+      --hover-color: #0056b3;
+      --border-color: #d1d9e6;
+      --box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+      --error-bg: #ffe6e6;
+      --error-text: #d32f2f;
+      --success-bg: #e6f4ea;
+      --success-text: #2e7d32;
+      --logout-color: #dc3545;
+      --logout-hover: #b02a37;
+    }
+
+    .dark-theme {
+      --bg-color: #000000;
+      --text-color: #ffffff;
+      --primary-color: #ff4d4d;
+      --hover-color: #cc3333;
+      --border-color: #333333;
+      --box-shadow: 0 4px 8px rgba(255, 77, 77, 0.2);
+      --error-bg: #4d0000;
+      --error-text: #ff9999;
+      --success-bg: #4d4d4d;
+      --success-text: #ff9999;
+      --logout-color: #ff4d4d;
+      --logout-hover: #cc3333;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      font-family: 'Segoe UI', Arial, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      transition: all 0.3s ease;
+    }
+
+    .container {
+      max-width: 600px;
+      width: 100%;
+    }
+
+    .profile-box {
+      background-color: #ffffff;
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: var(--box-shadow);
+      transition: transform 0.3s ease, background-color 0.3s ease;
+    }
+
+    .dark-theme .profile-box {
+      background-color: #2a2a2a;
+    }
+
+    .profile-box:hover {
+      transform: translateY(-5px);
+    }
+
+    h1 {
+      font-size: 24px;
+      margin-bottom: 1.5rem;
+      color: var(--text-color);
+    }
+
+    .data-section {
+      margin-bottom: 1.5rem;
+    }
+
+    #dataContainer {
+      background-color: #ffffff;
+      border: 1px solid var(--border-color);
+      padding: 1rem;
+      border-radius: 8px;
+      white-space: pre-wrap;
+      font-size: 14px;
+      color: #000000;
+      min-height: 100px;
+    }
+
+    .dark-theme #dataContainer {
+      background-color: #ffffff;
+      color: #000000;
+    }
+
+    button {
+      padding: 0.9rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 500;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+    .refresh-btn {
+      background-color: var(--primary-color);
+      color: #ffffff;
+      margin-bottom: 1rem;
+    }
+
+    .refresh-btn:hover {
+      background-color: var(--hover-color);
+      transform: translateY(-2px);
+    }
+
+    .refresh-btn:active {
+      transform: translateY(0);
+    }
+
+    .logout-btn {
+      background-color: var(--logout-color);
+      color: #ffffff;
+    }
+
+    .logout-btn:hover {
+      background-color: var(--logout-hover);
+      transform: translateY(-2px);
+    }
+
+    .logout-btn:active {
+      transform: translateY(0);
+    }
+
+    .theme-toggle {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--primary-color);
+      color: #ffffff;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      transition: background 0.3s ease;
+    }
+
+    .theme-toggle:hover {
+      background: var(--hover-color);
+    }
+
+    #message {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 15px 20px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      box-shadow: var(--box-shadow);
+      display: none;
+    }
+
+    .error {
+      background: var(--error-bg);
+      color: var(--error-text);
+    }
+
+    .success {
+      background: var(--success-bg);
+      color: var(--success-text);
+    }
+
+    @media (max-width: 480px) {
+      .container {
+        padding: 10px;
+      }
+
+      .profile-box {
+        padding: 1.5rem;
+      }
+
+      h1 {
+        font-size: 20px;
+      }
+
+      button {
+        font-size: 14px;
+        padding: 0.8rem;
+      }
+    }
+  </style>
+</head>
+<body class="light-theme">
+<div class="container">
+  <div class="profile-box">
+    <h1>Добро пожаловать, <span id="username"></span>!</h1>
+    <div class="data-section">
+      <button id="refreshData" class="refresh-btn">Обновить данные</button>
+      <pre id="dataContainer"></pre>
+    </div>
+    <button id="logout" class="logout-btn">Выйти</button>
+  </div>
+</div>
+<button id="themeToggle" class="theme-toggle">🌓</button>
+<div id="message"></div>
+
+<script>
+  const savedTheme = localStorage.getItem('theme') || 'light-theme';
+  document.body.className = savedTheme;
+
+  document.getElementById('themeToggle').addEventListener('click', () => {
+    const newTheme = document.body.classList.contains('dark-theme') ? 'light-theme' : 'dark-theme';
+    document.body.className = newTheme;
+    localStorage.setItem('theme', newTheme);
+  });
+
+  function getCsrfToken() {
+    const name = 'csrf_=';
+    const decodedCookie = decodeURIComponent(document.cookie);
+    const ca = decodedCookie.split(';');
+    for (let i = 0; i < ca.length; i++) {
+      let c = ca[i].trim();
+      if (c.indexOf(name) === 0) {
+        return c.substring(name.length, c.length);
+      }
+    }
+    return '';
+  }
+
+  function showMessage(text, isError) {
+    const msg = document.getElementById('message');
+    msg.textContent = text;
+    msg.className = isError ? 'error' : 'success';
+    msg.style.display = 'block';
+    setTimeout(() => msg.style.display = 'none', 3000);
+  }
+
+  async function checkAuth() {
+    try {
+      const response = await fetch('/api/profile', {
+        credentials: 'include'
+      });
+
+      if (!response.ok) {
+        showMessage('Сессия истекла. Пожалуйста, войдите снова.', true);
+        setTimeout(() => window.location.href = '/', 2000);
+        return false;
+      } else {
+        const userData = await response.json();
+        document.getElementById('username').textContent = userData.login;
+        return true;
+      }
+    } catch (error) {
+      console.error('Ошибка проверки авторизации:', error);
+      showMessage('Ошибка соединения. Пожалуйста, войдите снова.', true);
+      setTimeout(() => window.location.href = '/', 2000);
+      return false;
+    }
+  }
+
+  document.getElementById('logout').addEventListener('click', async () => {
+    try {
+      const csrfToken = getCsrfToken();
+      if (!csrfToken) {
+        showMessage('CSRF-токен не найден', true);
+        return;
+      }
+      const response = await fetch('/api/logout', {
+        method: 'POST',
+        headers: {
+          'X-CSRF-Token': csrfToken
+        },
+        credentials: 'include'
+      });
+      if (response.ok) {
+        showMessage('Выход успешен', false);
+        setTimeout(() => window.location.href = '/', 1000);
+      } else {
+        const error = await response.text();
+        showMessage(error || 'Ошибка выхода', true);
+      }
+    } catch (error) {
+      console.error('Ошибка выхода:', error);
+      showMessage('Ошибка соединения', true);
+    }
+  });
+
+  async function refreshData() {
+    try {
+      const response = await fetch('/api/data', {
+        credentials: 'include'
+      });
+      if (response.ok) {
+        const data = await response.text();
+        document.getElementById('dataContainer').textContent = data;
+        showMessage('Данные обновлены', false);
+      } else {
+        const error = await response.text();
+        showMessage(error || 'Ошибка получения данных', true);
+        if (response.status === 401) {
+          setTimeout(() => window.location.href = '/', 2000);
+        }
+      }
+    } catch (error) {
+      console.error('Ошибка получения данных:', error);
+      showMessage('Ошибка соединения', true);
+    }
+  }
+
+  document.getElementById('refreshData').addEventListener('click', refreshData);
+
+  checkAuth().then(isAuthenticated => {
+    if (isAuthenticated) {
+      refreshData();
+    }
+  });
+</script>
+</body>
+</html>

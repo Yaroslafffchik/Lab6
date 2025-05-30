@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Вход и регистрация</title>
+  <style>
+    :root {
+      --bg-color: #ffffff;
+      --text-color: #333333;
+      --primary-color: #007bff;
+      --hover-color: #0056b3;
+      --border-color: #d1d9e6;
+      --box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+      --error-bg: #ffe6e6;
+      --error-text: #d32f2f;
+      --success-bg: #e6f4ea;
+      --success-text: #2e7d32;
+    }
+
+    .dark-theme {
+      --bg-color: #000000;
+      --text-color: #ffffff;
+      --primary-color: #ff4d4d;
+      --hover-color: #cc3333;
+      --border-color: #333333;
+      --box-shadow: 0 4px 8px rgba(255, 77, 77, 0.2);
+      --error-bg: #4d0000;
+      --error-text: #ff9999;
+      --success-bg: #4d4d4d;
+      --success-text: #ff9999;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      font-family: 'Segoe UI', Arial, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      transition: all 0.3s ease;
+    }
+
+    .container {
+      max-width: 420px;
+      width: 100%;
+    }
+
+    .auth-box {
+      background-color: #ffffff;
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: var(--box-shadow);
+      transition: transform 0.3s ease, background-color 0.3s ease;
+    }
+
+    .dark-theme .auth-box {
+      background-color: #2a2a2a;
+    }
+
+    .auth-box:hover {
+      transform: translateY(-5px);
+    }
+
+    .tabs {
+      display: flex;
+      margin-bottom: 1.5rem;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .tab {
+      flex: 1;
+      padding: 1rem;
+      border: none;
+      background: #f1f3f5;
+      color: var(--text-color);
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 500;
+      transition: background 0.3s ease;
+    }
+
+    .dark-theme .tab {
+      background: #3a3a3a;
+    }
+
+    .tab.active {
+      background: var(--primary-color);
+      color: #ffffff;
+    }
+
+    .tab:hover {
+      background: #e0e0e0;
+    }
+
+    .dark-theme .tab:hover {
+      background: #4a4a4a;
+    }
+
+    .form {
+      display: none;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .form.active {
+      display: flex;
+    }
+
+    input {
+      padding: 0.9rem;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      background-color: #ffffff;
+      color: var(--text-color);
+      font-size: 16px;
+      transition: border-color 0.3s ease, background-color 0.3s ease;
+    }
+
+    .dark-theme input {
+      background-color: #3a3a3a;
+      color: #ffffff;
+    }
+
+    input::placeholder {
+      color: #6c757d;
+    }
+
+    .dark-theme input::placeholder {
+      color: #cccccc;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+    }
+
+    .dark-theme input:focus {
+      box-shadow: 0 0 5px rgba(255, 77, 77, 0.3);
+    }
+
+    button {
+      padding: 0.9rem;
+      border: none;
+      border-radius: 8px;
+      background-color: var(--primary-color);
+      color: #ffffff;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 500;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+    button:hover {
+      background-color: var(--hover-color);
+      transform: translateY(-2px);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    .theme-toggle {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--primary-color);
+      color: #ffffff;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      transition: background 0.3s ease;
+    }
+
+    .theme-toggle:hover {
+      background: var(--hover-color);
+    }
+
+    #message {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 15px 20px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      box-shadow: var(--box-shadow);
+      display: none;
+    }
+
+    .error {
+      background: var(--error-bg);
+      color: var(--error-text);
+    }
+
+    .success {
+      background: var(--success-bg);
+      color: var(--success-text);
+    }
+
+    @media (max-width: 480px) {
+      .container {
+        padding: 10px;
+      }
+
+      .auth-box {
+        padding: 1.5rem;
+      }
+
+      .tab {
+        font-size: 14px;
+        padding: 0.8rem;
+      }
+
+      input, button {
+        font-size: 14px;
+        padding: 0.8rem;
+      }
+    }
+  </style>
+</head>
+<body class="light-theme">
+<div class="container">
+  <div class="auth-box">
+    <div class="tabs">
+      <button class="tab active" data-tab="login">Вход</button>
+      <button class="tab" data-tab="register">Регистрация</button>
+    </div>
+
+    <form id="loginForm" class="form active">
+      <input type="text" id="loginUsername" placeholder="Логин" required>
+      <input type="password" id="loginPassword" placeholder="Пароль" required>
+      <button type="submit">Войти</button>
+    </form>
+
+    <form id="registerForm" class="form">
+      <input type="text" id="regUsername" placeholder="Логин" required>
+      <input type="password" id="regPassword" placeholder="Пароль (мин. 6 символов)" minlength="6" required>
+      <button type="submit">Создать аккаунт</button>
+    </form>
+  </div>
+</div>
+<button id="themeToggle" class="theme-toggle">🌓</button>
+<div id="message"></div>
+
+<script>
+  const savedTheme = localStorage.getItem('theme') || 'light-theme';
+  document.body.className = savedTheme;
+
+  document.getElementById('themeToggle').addEventListener('click', () => {
+    const newTheme = document.body.classList.contains('dark-theme') ? 'light-theme' : 'dark-theme';
+    document.body.className = newTheme;
+    localStorage.setItem('theme', newTheme);
+  });
+
+  document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.form').forEach(f => f.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById(`${tab.dataset.tab}Form`).classList.add('active');
+    });
+  });
+
+  function getCsrfToken() {
+    const name = 'csrf_=';
+    const decodedCookie = decodeURIComponent(document.cookie);
+    const ca = decodedCookie.split(';');
+    for (let i = 0; i < ca.length; i++) {
+      let c = ca[i].trim();
+      if (c.indexOf(name) === 0) {
+        return c.substring(name.length, c.length);
+      }
+    }
+    return '';
+  }
+
+  function showMessage(text, isError) {
+    const msg = document.getElementById('message');
+    msg.textContent = text;
+    msg.className = isError ? 'error' : 'success';
+    msg.style.display = 'block';
+    setTimeout(() => msg.style.display = 'none', 3000);
+  }
+
+  document.getElementById('loginForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const login = document.getElementById('loginUsername').value;
+    const password = document.getElementById('loginPassword').value;
+
+    try {
+      const csrfToken = getCsrfToken();
+      if (!csrfToken) {
+        showMessage('CSRF-токен не найден', true);
+        return;
+      }
+      const response = await fetch('/api/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-Token': csrfToken
+        },
+        body: JSON.stringify({ login, password }),
+        credentials: 'include'
+      });
+
+      if (response.ok) {
+        window.location.href = '/profile';
+      } else {
+        const error = await response.text();
+        showMessage(error || 'Неверный логин или пароль', true);
+      }
+    } catch (error) {
+      console.error('Ошибка входа:', error);
+      showMessage('Ошибка входа', true);
+    }
+  });
+
+  document.getElementById('registerForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const login = document.getElementById('regUsername').value;
+    const password = document.getElementById('regPassword').value;
+
+    try {
+      const csrfToken = getCsrfToken();
+      if (!csrfToken) {
+        showMessage('CSRF-токен не найден', true);
+        return;
+      }
+      const response = await fetch('/api/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-Token': csrfToken
+        },
+        body: JSON.stringify({ login, password }),
+        credentials: 'include'
+      });
+
+      if (response.status === 201) {
+        showMessage('Регистрация успешна! Пожалуйста, войдите.', false);
+        document.querySelector('.tab[data-tab="login"]').click();
+      } else {
+        const error = await response.text();
+        showMessage(error || 'Ошибка регистрации', true);
+      }
+    } catch (error) {
+      console.error('Ошибка регистрации:', error);
+      showMessage('Ошибка регистрации', true);
+    }
+  });
+</script>
+</body>
+</html>
